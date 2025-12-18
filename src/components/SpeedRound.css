@@ -1,0 +1,285 @@
+.speed-round-start,
+.speed-round-end,
+.speed-round-active {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: 80vh;
+}
+
+.speed-round-start {
+  display: flex;
+  flex-direction: column;
+}
+
+.speed-header {
+  margin-bottom: 2rem;
+}
+
+.speed-start-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.speed-start-content h1 {
+  font-size: 4rem;
+  margin-bottom: 2rem;
+  color: #2c3e50;
+}
+
+.speed-description {
+  background: white;
+  padding: 2rem;
+  border-radius: 20px;
+  margin-bottom: 2rem;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+}
+
+.speed-description p {
+  font-size: 1.3rem;
+  color: #555;
+  margin: 1rem 0;
+}
+
+.speed-best {
+  font-size: 1.5rem !important;
+  color: #667eea !important;
+  font-weight: 700 !important;
+  margin-top: 1.5rem !important;
+}
+
+.start-btn {
+  padding: 1.5rem 4rem;
+  font-size: 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 0.3s;
+}
+
+.start-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+}
+
+.speed-game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3rem;
+  background: white;
+  padding: 1.5rem 2rem;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.timer-display {
+  font-size: 3rem;
+  font-weight: 700;
+}
+
+.score-display-small {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.speed-question-card {
+  background: white;
+  padding: 3rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.speed-question {
+  text-align: center;
+  font-size: 2rem;
+  color: #2c3e50;
+  margin-bottom: 3rem;
+}
+
+.speed-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.speed-option {
+  padding: 2rem;
+  font-size: 1.3rem;
+  border: 3px solid #e0e0e0;
+  background: white;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.speed-option:hover {
+  transform: scale(1.05);
+  border-color: #667eea;
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+}
+
+.speed-option:active {
+  transform: scale(0.98);
+}
+
+.speed-round-end {
+  text-align: center;
+}
+
+.speed-round-end h1 {
+  font-size: 3rem;
+  color: #2c3e50;
+  margin-bottom: 3rem;
+}
+
+.final-score {
+  margin: 3rem 0;
+}
+
+.score-display {
+  display: inline-block;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 3rem 4rem;
+  border-radius: 30px;
+  box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+}
+
+.score-number {
+  font-size: 6rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.score-label {
+  font-size: 1.5rem;
+  margin-top: 0.5rem;
+  opacity: 0.9;
+}
+
+.new-best {
+  font-size: 2rem;
+  color: #f39c12;
+  margin-top: 2rem;
+  font-weight: 700;
+}
+
+.speed-stats {
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  margin: 2rem auto;
+  max-width: 500px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.speed-stats p {
+  font-size: 1.2rem;
+  color: #2c3e50;
+  margin: 1rem 0;
+  font-weight: 500;
+}
+
+.speed-actions {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.retry-btn,
+.menu-btn {
+  padding: 1rem 2.5rem;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.retry-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.retry-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+.menu-btn {
+  background: white;
+  color: #667eea;
+  border: 2px solid #667eea;
+}
+
+.menu-btn:hover {
+  background: #f0f3ff;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .speed-start-content h1 {
+    font-size: 2.5rem;
+  }
+
+  .speed-description {
+    padding: 1.5rem;
+  }
+
+  .speed-description p {
+    font-size: 1.1rem;
+  }
+
+  .start-btn {
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+  }
+
+  .timer-display {
+    font-size: 2rem;
+  }
+
+  .score-display-small {
+    font-size: 1.5rem;
+  }
+
+  .speed-question {
+    font-size: 1.4rem;
+  }
+
+  .speed-options {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .speed-option {
+    padding: 1.5rem;
+    font-size: 1.1rem;
+  }
+
+  .score-number {
+    font-size: 4rem;
+  }
+
+  .speed-actions {
+    flex-direction: column;
+  }
+
+  .retry-btn,
+  .menu-btn {
+    width: 100%;
+  }
+}

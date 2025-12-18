@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Map Coordinate Calibrator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    h1 { color: #667eea; }
+    .instructions {
+      background: #f0f4f8;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+    }
+    .controls {
+      margin-bottom: 1rem;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    select, button {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 2px solid #667eea;
+    }
+    button {
+      background: #667eea;
+      color: white;
+      cursor: pointer;
+      border: none;
+    }
+    button:hover { background: #5568d3; }
+    #mapContainer {
+      position: relative;
+      border: 3px solid #667eea;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: crosshair;
+      margin-bottom: 2rem;
+    }
+    #mapImage { width: 100%; display: block; }
+    .marker {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      background: red;
+      color: white;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      pointer-events: none;
+      z-index: 10;
+    }
+    #output {
+      background: #f5f5f5;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow: auto;
+      max-height: 400px;
+      font-family: monospace;
+      white-space: pre;
+    }
+  </style>
+</head>
+<body>
+  <h1>🗺️ Map Coordinate Calibrator</h1>
+
+  <div class="instructions">
+    <h3>Instructions:</h3>
+    <ol>
+      <li>Select a country from the dropdown</li>
+      <li>Click on that country's CENTER on the map below</li>
+      <li>Repeat for all countries</li>
+      <li>Click "Show Code" and copy the coordinates</li>
+      <li>Paste into InteractiveContinentMap.jsx</li>
+    </ol>
+  </div>
+
+  <div class="controls">
+    <label>
+      <strong>Country:</strong>
+      <select id="countrySelect">
+        <option value="">-- Select Country --</option>
+      </select>
+    </label>
+    <button onclick="showCode()">Show Code</button>
+    <button onclick="resetAll()">Reset All</button>
+    <span id="progress" style="margin-left: 1rem; color: #666;"></span>
+  </div>
+
+  <div id="mapContainer">
+    <img id="mapImage" src="/images/continents/europe.jpg" alt="Europe map">
+  </div>
+
+  <div id="output"></div>
+
+  <script>
+    const countries = [
+      'United Kingdom', 'France', 'Germany', 'Spain', 'Italy', 'Poland',
+      'Netherlands', 'Belgium', 'Portugal', 'Greece', 'Sweden', 'Norway',
+      'Denmark', 'Finland', 'Switzerland', 'Austria', 'Czech Republic',
+      'Hungary', 'Ireland', 'Romania', 'Ukraine', 'Bulgaria', 'Croatia',
+      'Serbia', 'Slovakia', 'Lithuania', 'Latvia', 'Estonia', 'Belarus',
+      'Moldova', 'Iceland', 'Luxembourg', 'Montenegro', 'Kosovo',
+      'Albania', 'North Macedonia', 'Slovenia', 'Bosnia and Herzegovina',
+      'Andorra', 'Malta', 'Liechtenstein', 'San Marino', 'Monaco', 'Vatican City'
+    ];
+
+    const coordinates = {};
+    const select = document.getElementById('countrySelect');
+    const mapContainer = document.getElementById('mapContainer');
+    const progress = document.getElementById('progress');
+
+    // Populate dropdown
+    countries.forEach(c => {
+      const option = document.createElement('option');
+      option.value = c;
+      option.textContent = c;
+      select.appendChild(option);
+    });
+
+    updateProgress();
+
+    // Handle map clicks
+    mapContainer.addEventListener('click', (e) => {
+      const country = select.value;
+      if (!country) {
+        alert('Please select a country first!');
+        return;
+      }
+
+      const rect = mapContainer.getBoundingClientRect();
+      const x = Math.round(((e.clientX - rect.left) / rect.width) * 100);
+      const y = Math.round(((e.clientY - rect.top) / rect.height) * 100);
+
+      coordinates[country] = { x, y };
+
+      // Add marker
+      addMarker(country, x, y);
+
+      // Move to next country
+      const currentIndex = countries.indexOf(country);
+      if (currentIndex < countries.length - 1) {
+        select.value = countries[currentIndex + 1];
+      } else {
+        select.value = '';
+      }
+
+      updateProgress();
+    });
+
+    function addMarker(country, x, y) {
+      // Remove existing marker
+      const existing = document.getElementById('marker-' + country);
+      if (existing) existing.remove();
+
+      const marker = document.createElement('div');
+      marker.className = 'marker';
+      marker.id = 'marker-' + country;
+      marker.textContent = country;
+      marker.style.left = x + '%';
+      marker.style.top = y + '%';
+      mapContainer.appendChild(marker);
+    }
+
+    function updateProgress() {
+      progress.textContent = `Progress: ${Object.keys(coordinates).length} / ${countries.length} countries`;
+
+      // Update dropdown to show completed countries
+      Array.from(select.options).forEach(opt => {
+        if (opt.value && coordinates[opt.value]) {
+          opt.textContent = opt.value + ' ✅';
+        }
+      });
+    }
+
+    function showCode() {
+      let code = 'const countryCoordinates = {\n';
+      Object.entries(coordinates).forEach(([country, coords]) => {
+        code += `  '${country}': { x: ${coords.x}, y: ${coords.y} },\n`;
+      });
+      code += '};';
+
+      const output = document.getElementById('output');
+      output.textContent = code;
+
+      // Add copy button
+      const copyBtn = document.createElement('button');
+      copyBtn.textContent = '📋 Copy to Clipboard';
+      copyBtn.style.marginTop = '1rem';
+      copyBtn.onclick = () => {
+        navigator.clipboard.writeText(code);
+        alert('Coordinates copied!');
+      };
+      output.appendChild(copyBtn);
+    }
+
+    function resetAll() {
+      if (confirm('Reset all coordinates?')) {
+        Object.keys(coordinates).forEach(c => delete coordinates[c]);
+        document.querySelectorAll('.marker').forEach(m => m.remove());
+        updateProgress();
+        document.getElementById('output').textContent = '';
+      }
+    }
+  </script>
+</body>
+</html>

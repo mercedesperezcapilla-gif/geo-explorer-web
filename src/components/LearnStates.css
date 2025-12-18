@@ -1,0 +1,266 @@
+.learn-states {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.header-bar {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.back-btn {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.3s;
+}
+
+.back-btn:hover {
+  background: #2980b9;
+}
+
+.header-bar h2 {
+  margin: 0;
+  color: #2c3e50;
+}
+
+.region-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.region-tab {
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #e0e0e0;
+  background: white;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 1rem;
+}
+
+.region-tab:hover {
+  border-color: #667eea;
+}
+
+.region-tab.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-color: #667eea;
+}
+
+.learn-content {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 2rem;
+  min-height: 500px;
+}
+
+.states-list {
+  background: white;
+  border-radius: 15px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.states-list h3 {
+  margin-top: 0;
+  color: #2c3e50;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 0.5rem;
+}
+
+.state-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-bottom: 0.5rem;
+}
+
+.state-item:hover {
+  background: #f8f9fa;
+}
+
+.state-item.selected {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.state-name {
+  flex: 1;
+  font-weight: 500;
+}
+
+.state-abbr {
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.state-item.selected .state-abbr {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.state-details {
+  background: white;
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.state-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.state-title {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.state-header h2 {
+  margin: 0;
+  color: #2c3e50;
+}
+
+.state-nickname {
+  color: #7f8c8d;
+  font-style: italic;
+  font-size: 1.1rem;
+}
+
+.state-shape-display {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+  padding: 2rem;
+  background: #f8f9fa;
+  border-radius: 15px;
+}
+
+.state-shape-large {
+  width: 300px;
+  height: auto;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.detail-card {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 10px;
+  border-left: 4px solid #667eea;
+}
+
+.detail-card h4 {
+  margin: 0 0 0.5rem 0;
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+
+.detail-card p {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.detail-section {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+.detail-section h4 {
+  margin: 0 0 1rem 0;
+  color: #2c3e50;
+}
+
+.detail-section p {
+  margin: 0;
+  color: #555;
+  line-height: 1.6;
+  font-size: 1.05rem;
+}
+
+.no-selection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.no-selection p {
+  color: #7f8c8d;
+  font-size: 1.2rem;
+}
+
+@media (max-width: 1024px) {
+  .learn-content {
+    grid-template-columns: 1fr;
+  }
+
+  .states-list {
+    max-height: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .learn-states {
+    padding: 1rem;
+  }
+
+  .header-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .region-tabs {
+    gap: 0.5rem;
+  }
+
+  .region-tab {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .state-shape-large {
+    width: 200px;
+  }
+}
