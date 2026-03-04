@@ -112,6 +112,56 @@ const InteractiveContinentMap = ({ continent, onCountrySelect, selectedCountry }
     return { x: Math.round(x), y: Math.round(y) };
   };
 
+  // Capital city coordinates (latitude, longitude) - ACTUAL CAPITAL LOCATIONS
+  const capitalCoordinates = {
+    // EUROPE - Capital Cities
+    'United Kingdom': [51.5074, -0.1278],  // London
+    'France': [48.8566, 2.3522],  // Paris
+    'Germany': [52.5200, 13.4050],  // Berlin
+    'Spain': [40.4168, -3.7038],  // Madrid
+    'Italy': [41.9028, 12.4964],  // Rome
+    'Poland': [52.2297, 21.0122],  // Warsaw
+    'Ukraine': [50.4501, 30.5234],  // Kyiv
+    'Romania': [44.4268, 26.1025],  // Bucharest
+    'Netherlands': [52.3676, 4.9041],  // Amsterdam
+    'Belgium': [50.8503, 4.3517],  // Brussels
+    'Greece': [37.9838, 23.7275],  // Athens
+    'Portugal': [38.7223, -9.1393],  // Lisbon
+    'Sweden': [59.3293, 18.0686],  // Stockholm
+    'Norway': [59.9139, 10.7522],  // Oslo
+    'Denmark': [55.6761, 12.5683],  // Copenhagen
+    'Finland': [60.1695, 24.9354],  // Helsinki
+    'Switzerland': [46.9480, 7.4474],  // Bern
+    'Austria': [48.2082, 16.3738],  // Vienna
+    'Czech Republic': [50.0755, 14.4378],  // Prague
+    'Hungary': [47.4979, 19.0402],  // Budapest
+    'Ireland': [53.3498, -6.2603],  // Dublin
+    'Croatia': [45.8150, 15.9819],  // Zagreb
+    'Serbia': [44.7866, 20.4489],  // Belgrade
+    'Bulgaria': [42.6977, 23.3219],  // Sofia
+    'Slovakia': [48.1486, 17.1077],  // Bratislava
+    'Bosnia and Herzegovina': [43.8564, 18.4131],  // Sarajevo
+    'Albania': [41.3275, 19.8187],  // Tirana
+    'North Macedonia': [41.9973, 21.4280],  // Skopje
+    'Slovenia': [46.0569, 14.5058],  // Ljubljana
+    'Lithuania': [54.6872, 25.2797],  // Vilnius
+    'Latvia': [56.9496, 24.1052],  // Riga
+    'Estonia': [59.4370, 24.7536],  // Tallinn
+    'Belarus': [53.9045, 27.5615],  // Minsk
+    'Moldova': [47.0105, 28.8638],  // Chișinău
+    'Russia': [55.7558, 37.6173],  // Moscow
+    'Iceland': [64.1466, -21.9426],  // Reykjavik
+    'Luxembourg': [49.6116, 6.1319],  // Luxembourg City
+    'Montenegro': [42.4304, 19.2594],  // Podgorica
+    'Kosovo': [42.6629, 21.1655],  // Pristina
+    'Andorra': [42.5063, 1.5218],  // Andorra la Vella
+    'Malta': [35.8989, 14.5146],  // Valletta
+    'Liechtenstein': [47.1410, 9.5209],  // Vaduz
+    'San Marino': [43.9424, 12.4578],  // San Marino
+    'Monaco': [43.7384, 7.4246],  // Monaco
+    'Vatican City': [41.9029, 12.4534],  // Vatican City
+  };
+
   // Country centroids (latitude, longitude) - REAL GEOGRAPHIC DATA
   const countryCentroids = {
     'United Kingdom': [53.5, -1.5],  // Adjusted: centered over England
@@ -318,10 +368,12 @@ const InteractiveContinentMap = ({ continent, onCountrySelect, selectedCountry }
     'Tuvalu': [-8.5, 179.2],
   };
 
-  // Convert all centroids to map coordinates
+  // Convert all centroids to map coordinates (use capital coordinates when available)
   const countryCoordinates = {};
   Object.keys(countryCentroids).forEach(country => {
-    const [lat, lon] = countryCentroids[country];
+    // Prefer capital coordinates for accurate capital city positioning
+    const coords = capitalCoordinates[country] || countryCentroids[country];
+    const [lat, lon] = coords;
     countryCoordinates[country] = convertGeoToMapCoords(lat, lon);
   });
 
@@ -400,6 +452,25 @@ const InteractiveContinentMap = ({ continent, onCountrySelect, selectedCountry }
               `;
             }}
           />
+
+          {/* Clickable overlay zones for all countries */}
+          {continentCountries.map((country) => {
+            if (!countryCoordinates[country.name]) return null;
+            return (
+              <div
+                key={country.name}
+                className="country-clickable-zone"
+                style={{
+                  left: `${countryCoordinates[country.name].x}%`,
+                  top: `${countryCoordinates[country.name].y}%`,
+                  width: `${(countrySizes[country.name] || 2) * 40}px`,
+                  height: `${(countrySizes[country.name] || 2) * 30}px`,
+                }}
+                onClick={() => onCountrySelect(country)}
+                title={country.name}
+              />
+            );
+          })}
 
           {/* Enhanced glow zones for selected country */}
           {selectedCountry && countryCoordinates[selectedCountry.name] ? (
