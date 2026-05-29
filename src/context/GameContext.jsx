@@ -42,11 +42,32 @@ const getDefaultState = () => ({
   achievements_new: []
 });
 
-export const GameProvider = ({ children }) => {
-  const [gameState, setGameState] = useState(() => {
+  const loadInitialState = () => {
     const saved = localStorage.getItem('geo_explorer_save');
-    return saved ? JSON.parse(saved) : getDefaultState();
-  });
+    // Merge over defaults so saves from older versions don't arrive with
+    // missing fields (which previously caused undefined crashes on load).
+    let state = saved
+      ? { ...getDefaultState(), ...JSON.parse(saved) }
+      : getDefaultState();
+
+    // Apply daily streak / days-played once, at load time.
+    const today = new Date().toISOString().split('T')[0];
+    if (state.last_played !== today) {
+      const lastDate = new Date(state.last_played);
+      const todayDate = new Date(today);
+      const diffDays = Math.floor((todayDate - lastDate) / (1000 * 60 * 60 * 24));
+      state = {
+        ...state,
+        last_played: today,
+        streak_days: diffDays === 1 ? state.streak_days + 1 : 1,
+        days_played: state.days_played + 1
+      };
+    }
+    return state;
+  };
+
+export const GameProvider = ({ children }) => {
+  const [gameState, setGameState] = useState(loadInitialState);
 
   const [currentView, setCurrentView] = useState('menu');
   const [currentQuiz, setCurrentQuiz] = useState(null);
@@ -54,22 +75,6 @@ export const GameProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem('geo_explorer_save', JSON.stringify(gameState));
   }, [gameState]);
-
-  useEffect(() => {
-    const today = new Date().toISOString().split('T')[0];
-    if (gameState.last_played !== today) {
-      const lastDate = new Date(gameState.last_played);
-      const todayDate = new Date(today);
-      const diffDays = Math.floor((todayDate - lastDate) / (1000 * 60 * 60 * 24));
-
-      setGameState(prev => ({
-        ...prev,
-        last_played: today,
-        streak_days: diffDays === 1 ? prev.streak_days + 1 : 1,
-        days_played: prev.days_played + 1
-      }));
-    }
-  }, []);
 
   const addXP = (amount) => {
     setGameState(prev => {
@@ -82,40 +87,39 @@ export const GameProvider = ({ children }) => {
   const updateCountryProgress = (countryName, correct) => {
     setGameState(prev => {
       const currentLevel = prev.country_progress[countryName] || 0;
-      let newLevel = currentLevel;
-
-      if (correct) {
-        newLevel = Math.min(4, currentLevel + 1);
-      } else {
-        newLevel = Math.max(0, currentLevel - 1);
-      }
+      const newLevel = correct
+        ? Math.min(4, currentLevel + 1)
+        : Math.max(0, currentLevel - 1);
 
       const country = COUNTRIES.find(c => c.name === countryName);
       const wasMastered = currentLevel === 4;
       const nowMastered = newLevel === 4;
+      const justMastered = nowMastered && !wasMastered;
+      const justUnmastered = wasMastered && !nowMastered;
+      const masteryDelta = justMastered ? 1 : (justUnmastered ? -1 : 0);
 
-      const continentKey = `${country.continent.toLowerCase().replace(/ /g, '_')}_mastered`;
-      const continentDelta = nowMastered && !wasMastered ? 1 : (wasMastered && !nowMastered ? -1 : 0);
+      const continentKey = country
+        ? `${country.continent.toLowerCase().replace(/ /g, '_')}_mastered`
+        : null;
+
+      const updatedProgress = { ...prev.country_progress, [countryName]: newLevel };
+
+      // Award mastery XP inside the same update so it can't read stale state
+      // or be awarded on the wrong tick.
+      const masteryXP = justMastered ? XP_REWARDS.country_mastered : 0;
+      const newXP = prev.xp + masteryXP;
+      const newPlayerLevel = LEVELS.filter(l => newXP >= l.min_xp).pop().level;
 
       return {
         ...prev,
-        country_progress: {
-          ...prev.country_progress,
-          [countryName]: newLevel
-        },
-        total_mastered: prev.total_mastered + (nowMastered && !wasMastered ? 1 : 0),
-        [continentKey]: (prev[continentKey] || 0) + continentDelta,
-        countries_seen: Math.max(prev.countries_seen, Object.keys({...prev.country_progress, [countryName]: newLevel}).length)
+        xp: newXP,
+        level: newPlayerLevel,
+        country_progress: updatedProgress,
+        total_mastered: Math.max(0, prev.total_mastered + masteryDelta),
+        ...(continentKey ? { [continentKey]: Math.max(0, (prev[continentKey] || 0) + masteryDelta) } : {}),
+        countries_seen: Math.max(prev.countries_seen, Object.keys(updatedProgress).length)
       };
     });
-
-    if (correct) {
-      const country = COUNTRIES.find(c => c.name === countryName);
-      const newLevel = (gameState.country_progress[countryName] || 0) + 1;
-      if (newLevel === 4) {
-        addXP(XP_REWARDS.country_mastered);
-      }
-    }
   };
 
   const checkAndAwardBadges = () => {

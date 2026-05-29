@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useGame } from '../context/GameContext';
-import { COUNTRIES } from '../data/countries';
+import { COUNTRIES, CONTINENTS } from '../data/countries';
 import { XP_REWARDS } from '../data/gameData';
 import { getFlagUrl, getCountryShapeUrl } from '../data/countryCodes';
 import './QuizEngine.css';
@@ -15,6 +15,7 @@ const QuizEngine = ({ mode, questionCount, title, onComplete, selectedTypes, sel
   const [score, setScore] = useState(0);
   const [quizComplete, setQuizComplete] = useState(false);
   const [streak, setStreak] = useState(0);
+  const [bestStreak, setBestStreak] = useState(0);
 
   // Filter countries by continent if specified
   const availableCountries = selectedContinent
@@ -157,8 +158,11 @@ const QuizEngine = ({ mode, questionCount, title, onComplete, selectedTypes, sel
   }
 
   function generateContinentQuestion(country) {
-    const allContinents = ['Europe', 'Asia', 'Americas', 'Africa', 'Oceania'];
-    const wrongContinents = allContinents.filter(c => c !== country.continent).slice(0, 3);
+    // Use the real continent labels from the data ("North America" /
+    // "South America"), not a made-up "Americas" that never matches.
+    const wrongContinents = shuffleArray(
+      CONTINENTS.filter(c => c !== country.continent)
+    ).slice(0, 3);
     const options = shuffleArray([
       { text: country.continent, correct: true },
       { text: wrongContinents[0], correct: false },
@@ -175,10 +179,23 @@ const QuizEngine = ({ mode, questionCount, title, onComplete, selectedTypes, sel
   }
 
   function generateQuestions() {
-    const newQuestions = [];
-    const selectedCountries = shuffleArray(availableCountries).slice(0, questionCount);
+    // Challenge mode focuses on the player's weak areas: countries with the
+    // lowest mastery (least practised / unseen first).
+    let pool;
+    if (mode === 'challenge') {
+      pool = [...availableCountries].sort((a, b) =>
+        (gameState.country_progress[a.name] || 0) - (gameState.country_progress[b.name] || 0)
+      );
+    } else {
+      pool = shuffleArray(availableCountries);
+    }
 
-    for (let i = 0; i < questionCount; i++) {
+    // Never ask for more questions than there are countries available.
+    const count = Math.min(questionCount, pool.length);
+    const selectedCountries = pool.slice(0, count);
+
+    const newQuestions = [];
+    for (let i = 0; i < selectedCountries.length; i++) {
       const country = selectedCountries[i];
       const questionType = questionTypes[Math.floor(Math.random() * questionTypes.length)];
       newQuestions.push(questionType.generate(country));
@@ -197,8 +214,10 @@ const QuizEngine = ({ mode, questionCount, title, onComplete, selectedTypes, sel
     const currentQuestion = questions[currentQuestionIndex];
 
     if (correct) {
+      const newStreak = streak + 1;
       setScore(score + 1);
-      setStreak(streak + 1);
+      setStreak(newStreak);
+      setBestStreak(prev => Math.max(prev, newStreak));
       addXP(XP_REWARDS.correct_answer);
       updateCountryProgress(currentQuestion.country, true);
 
@@ -256,7 +275,10 @@ const QuizEngine = ({ mode, questionCount, title, onComplete, selectedTypes, sel
 
   if (quizComplete) {
     const percentage = Math.round((score / questionCount) * 100);
-    const newBadges = checkAndAwardBadges();
+    // Badges are awarded once in completeQuiz(); read the result for display
+    // instead of calling checkAndAwardBadges() during render (which triggers
+    // a setState-in-render cascade).
+    const newBadges = gameState.achievements_new || [];
 
     return (
       <div className="quiz-complete">
@@ -272,7 +294,7 @@ const QuizEngine = ({ mode, questionCount, title, onComplete, selectedTypes, sel
 
         <div className="quiz-stats">
           <p>Questions Correct: {score}</p>
-          <p>Best Streak: {Math.max(...questions.map((_, i) => i < score ? i + 1 : 0))}</p>
+          <p>Best Streak: {bestStreak}</p>
         </div>
 
         {newBadges.length > 0 && (

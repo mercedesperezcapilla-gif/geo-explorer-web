@@ -5,14 +5,14 @@ import InteractiveContinentMap from './InteractiveContinentMap';
 import './MapExplorer.css';
 
 const MapExplorer = () => {
-  const { setCurrentView, updateCountryProgress } = useGame();
+  const { setCurrentView } = useGame();
   const [selectedContinent, setSelectedContinent] = useState('Europe');
   const [selectedCountry, setSelectedCountry] = useState(null);
 
   const handleCountrySelect = (country) => {
+    // Exploring the map is for learning only — it must not count as a
+    // correct answer or award mastery/XP. Just show the selected country.
     setSelectedCountry(country);
-    // Mark as started if not already
-    updateCountryProgress(country.name, true);
   };
 
   return (

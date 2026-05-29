@@ -12,6 +12,12 @@ const SpeedRound = () => {
   const [options, setOptions] = useState([]);
   const [gameActive, setGameActive] = useState(false);
   const [gameOver, setGameOver] = useState(false);
+  // Snapshot of the best score from BEFORE this round, captured at endGame.
+  // Needed because endGame overwrites gameState.speed_best, which would
+  // otherwise make "New Personal Best" always fire and the previous-best
+  // figure read back as the score we just set.
+  const [prevBest, setPrevBest] = useState(0);
+  const [isNewBest, setIsNewBest] = useState(false);
 
   useEffect(() => {
     if (gameActive && timeLeft > 0) {
@@ -55,7 +61,7 @@ const SpeedRound = () => {
 
   function handleAnswer(option) {
     if (option.correct) {
-      setScore(score + 1);
+      setScore(s => s + 1);
       addXP(XP_REWARDS.correct_answer);
     }
     generateQuestion();
@@ -65,11 +71,16 @@ const SpeedRound = () => {
     setGameActive(false);
     setGameOver(true);
 
-    if (score > gameState.speed_best) {
-      updateStats({ speed_best: score });
-    }
+    // Capture the pre-round best BEFORE we overwrite it, so the results
+    // screen can show an accurate "Previous Best" and only celebrate a
+    // genuine improvement.
+    const previousBest = gameState.speed_best;
+    setPrevBest(previousBest);
+    const beatBest = score > previousBest;
+    setIsNewBest(beatBest);
 
     updateStats({
+      ...(beatBest ? { speed_best: score } : {}),
       total_correct: gameState.total_correct + score,
       quizzes_completed: gameState.quizzes_completed + 1
     });
@@ -100,7 +111,6 @@ const SpeedRound = () => {
   }
 
   if (gameOver) {
-    const isNewBest = score > gameState.speed_best - 1;
     return (
       <div className="speed-round-end">
         <h1>⚡ Speed Round Complete!</h1>
@@ -114,7 +124,7 @@ const SpeedRound = () => {
           )}
         </div>
         <div className="speed-stats">
-          <p>Previous Best: {gameState.speed_best - score > 0 ? gameState.speed_best - score : gameState.speed_best}</p>
+          <p>Previous Best: {prevBest}</p>
           <p>Answers Per Second: {(score / 60).toFixed(2)}</p>
         </div>
         <div className="speed-actions">

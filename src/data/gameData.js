@@ -1,3 +1,18 @@
+import { COUNTRIES } from './countries';
+
+// Derive counts from the actual data so badge thresholds can never drift out
+// of sync (previously Asia needed 48 and "all countries" needed 195, but the
+// data only has 45 and 192 — making those badges impossible to earn).
+const COUNT = {
+  total: COUNTRIES.length,
+  europe: COUNTRIES.filter(c => c.continent === 'Europe').length,
+  asia: COUNTRIES.filter(c => c.continent === 'Asia').length,
+  north_america: COUNTRIES.filter(c => c.continent === 'North America').length,
+  south_america: COUNTRIES.filter(c => c.continent === 'South America').length,
+  africa: COUNTRIES.filter(c => c.continent === 'Africa').length,
+  oceania: COUNTRIES.filter(c => c.continent === 'Oceania').length,
+};
+
 export const BADGES = {
   globe_trotter: {
     name: "Globe Trotter",
@@ -9,37 +24,37 @@ export const BADGES = {
     name: "Euro Expert",
     icon: "🇪🇺",
     description: "Master all European countries",
-    check: (stats) => stats.europe_mastered >= 44
+    check: (stats) => stats.europe_mastered >= COUNT.europe
   },
   asia_ace: {
     name: "Asia Ace",
     icon: "🌏",
     description: "Master all Asian countries",
-    check: (stats) => stats.asia_mastered >= 48
+    check: (stats) => stats.asia_mastered >= COUNT.asia
   },
   north_america_hero: {
     name: "North America Hero",
     icon: "🌎",
     description: "Master all North American countries",
-    check: (stats) => stats.north_america_mastered >= 23
+    check: (stats) => stats.north_america_mastered >= COUNT.north_america
   },
   south_america_hero: {
     name: "South America Hero",
     icon: "🗺️",
     description: "Master all South American countries",
-    check: (stats) => stats.south_america_mastered >= 12
+    check: (stats) => stats.south_america_mastered >= COUNT.south_america
   },
   africa_adventurer: {
     name: "Africa Adventurer",
     icon: "🦁",
     description: "Master all African countries",
-    check: (stats) => stats.africa_mastered >= 54
+    check: (stats) => stats.africa_mastered >= COUNT.africa
   },
   oceania_explorer: {
     name: "Oceania Explorer",
     icon: "🏝️",
     description: "Master all Oceania countries",
-    check: (stats) => stats.oceania_mastered >= 14
+    check: (stats) => stats.oceania_mastered >= COUNT.oceania
   },
   capital_king: {
     name: "Capital King",
@@ -74,8 +89,8 @@ export const BADGES = {
   geography_genius: {
     name: "Geography Genius",
     icon: "🌟",
-    description: "Master all 195 countries",
-    check: (stats) => stats.total_mastered >= 195
+    description: "Master all countries",
+    check: (stats) => stats.total_mastered >= COUNT.total
   },
   first_steps: {
     name: "First Steps",

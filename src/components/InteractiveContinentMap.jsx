@@ -49,6 +49,7 @@ const InteractiveContinentMap = ({ continent, onCountrySelect, selectedCountry }
     // ASIA - Small
     'Israel': 1, 'Kuwait': 1, 'Lebanon': 1, 'Bhutan': 1, 'Qatar': 1,
     'Bahrain': 1, 'Brunei': 1, 'Maldives': 1, 'Singapore': 1,
+    'Kyrgyzstan': 2, 'Turkmenistan': 2, 'Timor-Leste': 1,
 
     // AFRICA - Large
     'Algeria': 3, 'Democratic Republic of the Congo': 3, 'Sudan': 3, 'Libya': 3,
@@ -65,6 +66,7 @@ const InteractiveContinentMap = ({ continent, onCountrySelect, selectedCountry }
     'Eswatini': 2, 'Guinea-Bissau': 2, 'Gambia': 2,
     // AFRICA - Small
     'Mauritius': 1, 'Comoros': 1, 'Cape Verde': 1, 'Sao Tome and Principe': 1, 'Seychelles': 1,
+    'São Tomé and Príncipe': 1, 'Republic of the Congo': 2,
 
     // NORTH AMERICA - Large
     'Canada': 3, 'United States': 3, 'Mexico': 3,
@@ -252,6 +254,9 @@ const InteractiveContinentMap = ({ continent, onCountrySelect, selectedCountry }
     'Qatar': [25.5, 51.2],
     'Bahrain': [26.0, 50.5],
     'East Timor': [-8.8, 125.9],
+    'Timor-Leste': [-8.8, 125.9],
+    'Kyrgyzstan': [41.2, 74.8],
+    'Turkmenistan': [39.0, 59.0],
     'Cyprus': [35.0, 33.0],
     'Bhutan': [27.5, 90.5],
     'Maldives': [3.2, 73.0],
@@ -310,6 +315,8 @@ const InteractiveContinentMap = ({ continent, onCountrySelect, selectedCountry }
     'Comoros': [-12.2, 44.4],
     'Cape Verde': [16.0, -24.0],
     'Sao Tome and Principe': [0.3, 6.7],
+    'São Tomé and Príncipe': [0.3, 6.7],
+    'Republic of the Congo': [-1.0, 15.5],
     'Seychelles': [-4.6, 55.5],
 
     // NORTH AMERICA
